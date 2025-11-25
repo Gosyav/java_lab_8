@@ -1,0 +1,11 @@
+/home/jgv/labs/java/lab8/src/main/java/lab8/App.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/core/Library.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/core/Simulation.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/data/LibraryLoader.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/model/Book.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/model/Film.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/model/Journal.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/model/LibraryItem.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/user/Faculty.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/user/Student.java
+/home/jgv/labs/java/lab8/src/main/java/lab8/user/User.java
