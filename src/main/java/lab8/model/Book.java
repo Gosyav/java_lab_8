@@ -1,6 +1,8 @@
 package lab8.model;
 
-public class Book extends LibraryItem {
+import lab8.user.User;
+
+public final class Book extends LibraryItem implements Loanable {
   public static final int BOOK_LOAN_PERIOD = 14;
   public static final double BOOK_FINE = 0.5;
 
@@ -13,5 +15,25 @@ public class Book extends LibraryItem {
     this.author = author;
     this.genre = genre;
     this.publisher = publisher;
+  }
+
+  @Override
+  public int getLoanPeriod(User user) {
+    return BOOK_LOAN_PERIOD;
+  }
+
+  @Override
+  public double getDailyOverdueFee() {
+    return BOOK_FINE;
+  }
+
+  @Override
+  public boolean matches(String keyword) {
+    String k = keyword.toLowerCase();
+
+    return title.toLowerCase().contains(k)
+        || author.toLowerCase().contains(k)
+        || genre.toLowerCase().contains(k)
+        || publisher.toLowerCase().contains(k);
   }
 }

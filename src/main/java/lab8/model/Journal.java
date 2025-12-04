@@ -1,6 +1,8 @@
 package lab8.model;
 
-public class Journal extends LibraryItem {
+import lab8.user.User;
+
+public final class Journal extends LibraryItem implements Loanable {
   public static final int JOURNAL_STUDENT_LOAN = 3;
   public static final int JOURNAL_FACULTY_LOAN = 7;
   public static final double JOURNAL_FINE = 2.0;
@@ -16,5 +18,39 @@ public class Journal extends LibraryItem {
     this.publisher = publisher;
     this.latestIssue = latestIssue;
     this.url = url;
+  }
+
+  @Override
+  public int getLoanPeriod(User user) {
+    if (user instanceof lab8.user.Student) {
+      return JOURNAL_STUDENT_LOAN;
+    }
+
+    return JOURNAL_FACULTY_LOAN;
+  }
+
+  @Override
+  public double getDailyOverdueFee() {
+    return JOURNAL_FINE;
+  }
+
+  @Override
+  public boolean matches(String keyword) {
+    String k = keyword.toLowerCase();
+
+    return title.toLowerCase().contains(k)
+        || eissn.toLowerCase().contains(k)
+        || publisher.toLowerCase().contains(k)
+        || latestIssue.toLowerCase().contains(k)
+        || url.toLowerCase().contains(k);
+  }
+
+  @Override
+  protected int getYearForComparison() {
+    try {
+      return Integer.parseInt(latestIssue.replaceAll("\\D", ""));
+    } catch (NumberFormatException e) {
+      return 0;
+    }
   }
 }

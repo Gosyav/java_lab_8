@@ -1,9 +1,13 @@
 package lab8;
 
+import lab8.core.EmailNotifier;
 import lab8.core.Library;
+import lab8.core.OverdueObserver;
 import lab8.core.Simulation;
 import lab8.data.LibraryLoader;
+import lab8.model.LibraryItem;
 import lab8.user.Student;
+import lab8.user.User;
 import lab8.user.Faculty;
 
 import java.time.LocalDate;
@@ -46,6 +50,16 @@ public class App {
     for (int i = 0; i < FACULTY_COUNT; i++) {
       library.addUser(new Faculty(STUDENT_COUNT + i, onTimeList.get(STUDENT_COUNT + i)));
     }
+
+    library.addObserver(new EmailNotifier());
+
+    library.addObserver(new OverdueObserver() {
+      @Override
+      public void notifyOverdue(User user, LibraryItem item, int daysLate) {
+        System.out.println("[ANON OBSERVER] First overdue: user=" + user.getId()
+            + ", item=" + item.getId() + ", days late=" + daysLate);
+      }
+    });
 
     Simulation simulation = new Simulation(library);
     simulation.run(LocalDate.of(2025, 1, 1));

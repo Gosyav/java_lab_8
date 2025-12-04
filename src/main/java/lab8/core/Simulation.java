@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Simulation {
   public static final int SIMULATION_DAYS = 365;
 
@@ -16,6 +19,7 @@ public class Simulation {
 
   private final Map<LibraryItem, User> borrowed = new HashMap<>();
   private final Map<User, Map<LibraryItem, LocalDate>> borrowedDates = new HashMap<>();
+  private final Set<LibraryItem> notifiedOverdue = new HashSet<>();
 
   public int totalBorrows = 0;
   public int totalReturns = 0;
@@ -89,6 +93,12 @@ public class Simulation {
 
     for (LibraryItem item : copy.keySet()) {
       boolean doReturn = false;
+      int overdueDays = item.daysOverdue(day);
+
+      if (overdueDays > 0 && !notifiedOverdue.contains(item)) {
+        library.notifyObservers(user, item, overdueDays);
+        notifiedOverdue.add(item);
+      }
 
       if (user.isOnTime()) {
         long due = items.get(item).plusDays(item.getLoanPeriod()).toEpochDay();
@@ -107,8 +117,6 @@ public class Simulation {
       if (!doReturn) {
         continue;
       }
-
-      int overdueDays = item.daysOverdue(day);
 
       if (overdueDays > 0) {
         totalOverdues++;

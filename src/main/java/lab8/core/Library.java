@@ -4,12 +4,12 @@ import lab8.model.Book;
 import lab8.model.Film;
 import lab8.model.Journal;
 import lab8.model.LibraryItem;
-import lab8.user.Faculty;
-import lab8.user.Student;
+import lab8.model.Loanable;
 import lab8.user.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -24,6 +24,7 @@ public class Library {
   private final List<Film> films = new ArrayList<>();
 
   private final List<User> users = new ArrayList<>();
+  private final List<OverdueObserver> observers = new ArrayList<>();
 
   private final Random random = new Random();
 
@@ -71,12 +72,10 @@ public class Library {
       }
     }
 
-    if (item instanceof Journal) {
-      if (user instanceof Student) {
-        item.setLoanPeriod(Journal.JOURNAL_STUDENT_LOAN);
-      } else if (user instanceof Faculty) {
-        item.setLoanPeriod(Journal.JOURNAL_FACULTY_LOAN);
-      }
+    if (item instanceof Loanable loanable) {
+      int period = loanable.getLoanPeriod(user);
+
+      item.setLoanPeriod(period);
     }
 
     item.borrow(user.getId(), day);
@@ -154,5 +153,54 @@ public class Library {
     }
 
     return getRandomAvailableFilm();
+  }
+
+  public void addObserver(OverdueObserver observer) {
+    observers.add(observer);
+  }
+
+  public void removeObserver(OverdueObserver observer) {
+    observers.remove(observer);
+  }
+
+  public void notifyObservers(User user, LibraryItem item, int daysLate) {
+    for (OverdueObserver o : observers) {
+      o.notifyOverdue(user, item, daysLate);
+    }
+  }
+
+  public List<LibraryItem> search(String keyword) {
+    List<LibraryItem> result = new ArrayList<>();
+
+    for (Book b : books) {
+      if (b.matches(keyword)) {
+        result.add(b);
+      }
+    }
+
+    for (Journal j : journals) {
+      if (j.matches(keyword)) {
+        result.add(j);
+      }
+    }
+
+    for (Film f : films) {
+      if (f.matches(keyword)) {
+        result.add(f);
+      }
+    }
+
+    return result;
+  }
+
+  public List<LibraryItem> getSortedCatalog() {
+    List<LibraryItem> all = new ArrayList<>();
+    all.addAll(books);
+    all.addAll(journals);
+    all.addAll(films);
+
+    Collections.sort(all);
+
+    return all;
   }
 }

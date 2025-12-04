@@ -2,7 +2,7 @@ package lab8.model;
 
 import java.time.LocalDate;
 
-public abstract class LibraryItem {
+public abstract sealed class LibraryItem implements Searchable, Comparable<LibraryItem> permits Book, Journal, Film {
   public static final int NO_LOAN_USER = -1;
 
   protected final String id;
@@ -54,7 +54,33 @@ public abstract class LibraryItem {
       return 0;
     }
 
-    return overdue * finePerDay;
+    return overdue * ((Loanable) this).getDailyOverdueFee();
+  }
+
+  @Override
+  public int compareTo(LibraryItem other) {
+    int byTitle = this.title.compareToIgnoreCase(other.title);
+    if (byTitle != 0) {
+      return byTitle;
+    }
+
+    int thisType = typeOrder(this);
+    int otherType = typeOrder(other);
+    if (thisType != otherType) {
+      return Integer.compare(thisType, otherType);
+    }
+
+    return Integer.compare(this.getYearForComparison(), other.getYearForComparison());
+  }
+
+  private static int typeOrder(LibraryItem item) {
+    if (item instanceof Book)
+      return 0;
+    if (item instanceof Journal)
+      return 1;
+    if (item instanceof Film)
+      return 2;
+    return 3;
   }
 
   public String getId() {
@@ -71,5 +97,9 @@ public abstract class LibraryItem {
 
   public void setLoanPeriod(int days) {
     this.loanPeriod = days;
+  }
+
+  protected int getYearForComparison() {
+    return 0;
   }
 }
